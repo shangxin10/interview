@@ -1,14 +1,27 @@
 {
-  "name": "vector",
+  "name": "interview",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "webRTC,interview",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
   "author": "vector",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.2"
+    "babel-core": "^6.24.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-3": "^6.22.0",
+    "babel-register": "^6.24.0",
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "debug": "^2.6.3",
+    "express": "^4.15.2",
+    "morgan": "^1.8.1",
+    "pm2": "^2.4.2",
+    "serve-favicon": "^2.4.1"
   }
 }

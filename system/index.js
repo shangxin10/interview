@@ -38,7 +38,7 @@ global.vector.isDir = str => {
 global.vector.isEmpty = obj =>{
     if(!obj) return true;
     let v = global.vector;
-    if(v.isObject(obj)) return Object.keys[obj].length === 0;
+    if(v.isObject(obj)) return Object.keys(obj).length === 0;
     else if(v.isNull(obj) || v.isUndefined(obj)) return true;
     else if(v.isArray(obj) || v.isBuffer(obj)) return obj.length === 0;
     else if(v.isString(obj)) return obj.trim().length === 0;
@@ -88,6 +88,7 @@ vector.readdir(vector.BOOTSTRAP_PATH).forEach(name =>{
         require(lspath);
     }
 })
+
 
 
 export default {

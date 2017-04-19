@@ -43,3 +43,14 @@ global.connectToMongo = async (options) => {
     reconnected = 0;
 }
 
+/**
+ * 获取相应的MongoDB操作model
+ */
+global.model = (modelName) => {
+    try {
+        return mongoose.model(modelName);
+    } catch(e) {
+        console.log("MongoDB连接未初始化或找不到该Schema!!", e.message)
+        return null;
+    }
+}

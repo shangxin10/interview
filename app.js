@@ -5,13 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var ejs = require('ejs');
-var index = require('./routes/index');
-var users = require('./routes/users');
-
+var system = require('./system/index');
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 var app = express();
 
 // view engine setup
-app.engine('html', ejs.__express)
+app.engine('.html', ejs.__express)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
@@ -23,7 +23,35 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+var redisCfg = vector.config('db').redis;
+//session 的redis 存储对象 
+var sessionRedisStore = new RedisStore({
+    host: redisCfg.host,
+    port: redisCfg.port,
+    pass: redisCfg.password,
+    ttl: 2 * 3600 * 1000, //过期时间2小时，
+    cookies: {
+      maxAge: 2 * 3600 * 1000, //过期时间2小时
+      httpOnly: true
+    },
+    db: 1 
+})
+/**
+ * session选项配置
+ */
+let sessionOpts = {
+    store: sessionRedisStore,
+    secret: 'vector'
+}
+app.use(session(sessionOpts));
+
+app.use(function(req, res, next){
+  if(!req.session){
+    return next(new Error('oh no'));
+  }
+  next();
+})
+system.routers.dispatch(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -40,6 +68,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
+  console.log(err)
   res.render('error');
 });
 

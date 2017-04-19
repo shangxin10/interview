@@ -1,33 +1,24 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
+import fs from "fs";
+import path from "path";
 
-/* GET home page. */
-router.get('/', async function(req,res,next){
-  let created = {
-    name: 'vector',
-    password: '123456'
-  }
-  let user = mongoose.model("User");
-  
-  await user.create(created);
-
-  let data = await user.findOne({
-    name: 'vector'
-  })
-
-  if(vector.isEmpty(data)){
-    console.log("user null")
+let access_dirs = ['public','private'];
+fs.readdirSync(__dirname).filter(name =>{
+  return name.indexOf('.') && access_dirs.indexOf(name) !== -1;
+}).forEach(name => {
+  let entryPath = path.join(__dirname, name);
+  let initFile = path.join(entryPath,"__init.js");
+  if(fs.existsSync(initFile)){
+    let route = require(initFile);
+    router.use('/user',route);
   }else{
-    console.log("name==",data.name);
-    console.log("password==",data.password);
+    vector.readdir(entryPath).forEach(fname =>{
+      let indexFile = path.join(entryPath, fname);
+      let route = require(indexFile);
+      router.use('',route)
+    })
   }
-  res.render('index', { title: 'Express',name:'vector' });
-});
-
-router.get('/test',async function(req,res,next){
-	
-	await res.render('index1',{title: 'test',name:'test'});
 })
 
 module.exports = router;

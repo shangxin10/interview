@@ -16,10 +16,8 @@ let Dispatcher = {
                 let sfile = path.join(dir,sname);
                 if(vector.isDir(sfile)) return;
                 let route = require(sfile);
-                let subPath = sname.substr(0,sname.lastIndexOf('.'));
-                let pathName = '/'+ name + (subPath === "index" ? '' : "/"+subPath);
-                console.log("pathName==>",pathName); 
-                app.use("",route);
+                console.log("name==>",name);
+                app.use('/'+name,route);
             })
         })
     }

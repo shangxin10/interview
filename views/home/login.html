@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>VectorStack</title>
+		<link rel="stylesheet" type="text/css" href="/css/index.css">
+		<link rel="stylesheet" type="text/css" href="/css/default.css">
+        <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script type="text/javascript" src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+        <script rel="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        
+	</head>
+<body>
+<div class="header">
+	<div class="header-inner">
+		<div class="logo">
+			<a href="/home">VectorStack</a>
+		</div>
+		<div class="user">
+			<ul class="nav nav-pills">
+				<li><button type="button" class="btn btn-primary navbar-btn" onclick="window.location.href='/home/register'">Sign up</button></li>
+				<li><button type="button" class="btn btn-default navbar-btn" onclick="window.location.href='/home/login'">Sign in</button></li>
+			</ul>
+		</div>
+	</div>
+    <div class="container">
+        <form class="form-signin" method="POST" action="/home/login">
+            <h3 class="form-signin-heading">Sign In</h3>
+            <hr>
+            <div class="form-group">
+                <input autofocus="autofocus" id="id_login" name="username" placeholder="Username or e-mail" type="text" required="" class="form-control">
+            </div>
+            <div class="form-group">
+                <input id="id_password" name="password" placeholder="Password" type="password" required="" class="form-control">
+            </div>
+            <label class="form-group"><input id="id_remember" name="remember" type="checkbox">Remember Me</label>
+            <div class="form-group">
+                 <button class="btn btn-primary" type="submit">Sign In</button>
+                 <a class="pull-right" href="/accounts/password/reset/">Forgot Password?</a>
+            </div>
+            <hr>    
+        </form>
+    </div>
+</div>

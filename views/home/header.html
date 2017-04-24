@@ -1,0 +1,30 @@
+<div class="header">
+		<div class="header-inner">
+			<div class="logo">
+				<a href="/home"><img class="imglogo" src="/image/home/logo.png"/></a>
+			</div>
+			<div class="user">
+					<%if(locals.user){%>
+					<div class="btn-group">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<%=locals.user.username%>  
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="/home/user/userinfo">个人资料</a></li>
+							<li><a href="/home/user/room/create">创建房间</a></li>
+							<li><a href='/home/user/room/join'>进入房间</a></li>
+							<li><a href="/home/user/room/list">房间列表</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="/home/user/logout">退出</a></li>
+						</ul>
+					</div>
+					<%}else{%>
+					<ul class="nav nav-pills">
+						<li><button type="button" class="btn btn-primary navbar-btn" onclick="window.location.href='/home/register'">注&nbsp;册</button></li>
+						<li><button type="button" class="btn btn-default navbar-btn" onclick="window.location.href='/home/login'">登&nbsp;录</button></li>
+					</ul>
+					<%}%>
+			</div>
+		</div>
+	</div>

@@ -27,6 +27,9 @@ global.vector.isUndefined = obj =>{
 global.vector.isObject = obj =>{
     return global.vector.getObjectType(obj) === 'object';
 }
+global.vector.isNull = obj => {
+    return global.vector.getObjectType(obj) === 'null';
+};
 global.vector.isArray = obj =>{
     return Array.isArray ? Array.isArray(obj)
         : global.vector.getObjectType(obj) === 'array';
@@ -44,6 +47,11 @@ global.vector.isEmpty = obj =>{
     else if(v.isString(obj)) return obj.trim().length === 0;
     else return false; 
 }
+
+global.vector.isObjectId = str => {
+    if(!vector.isString(str) || vector.isEmpty(str)) return false;
+    return mongoose.Types.ObjectId.isValid(str);
+};
 
 /**
  * 读取目录,过滤掉Markdown文件

@@ -10,9 +10,8 @@ router.use(async (req,res,next)=>{
     if(vector.isEmpty(user)){
         return res.redirect('/home/login');
     }else{
-        res.locals.uesr = user;
+        res.locals.user = user;
     }
-    console.log("users=>",user);
     await next();
 })
 

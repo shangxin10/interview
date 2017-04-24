@@ -16,7 +16,6 @@ let Dispatcher = {
                 let sfile = path.join(dir,sname);
                 if(vector.isDir(sfile)) return;
                 let route = require(sfile);
-                console.log("name==>",name);
                 app.use('/'+name,route);
             })
         })

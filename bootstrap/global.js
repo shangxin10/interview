@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import Bluebird from 'bluebird';
+import moment from "moment";
 
 let reconnected = 0; //重连mongodb 次数
 
@@ -21,7 +22,6 @@ global.connectToMongo = async (options) => {
     }
     url += "/" + options.db;
     
-    console.log("url==>",url);
     await mongoose.connect(url).catch(err =>{
         mongoose.disconnect();
         console.error("连接MongoDB出错：",err);
@@ -54,3 +54,12 @@ global.model = (modelName) => {
         return null;
     }
 }
+
+global.formatDate = (datetime, pattern) => {
+    if(vector.isEmpty(datetime)) return "";
+    let m = moment(datetime);
+    if(vector.isString(pattern) && !vector.isEmpty(pattern)) {
+        return m.format(pattern);
+    }
+    return m.format();
+};

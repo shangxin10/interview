@@ -30,6 +30,7 @@ router.post('/create',async(req, res, next) =>{
 		name: roomName,
 		type: roomType
 	})
+
 	await res.json({
 		errcode: 0,
 		errmsg: "ok",
@@ -63,6 +64,19 @@ router.post('/join',async(req, res, next) =>{
 			errmsg: "密码错误"
 		})
 	}
+
+	
+	let personCount = vector.sockets.get(roomNum) ? vector.sockets.get(roomNum).size : 0;
+	let limit = Room.type == 0 ? 2 : 3;
+
+	personCount = parseInt(personCount);
+	if(personCount >= limit){
+		return res.json({
+			errcode: 10003,
+			errmsg: "房间人数已满"
+		})
+	}
+	
 	await res.json({
 		errcode: 0,
 		errmsg: 'ok',
@@ -94,6 +108,7 @@ router.get('/del',async(req, res, next)=>{
 		_id: id
 	})
 
+	await vector.redis.room.del(removed.num)
 	if(vector.isEmpty(removed)){
 		return res.json({
 			errcode: 10002,

@@ -8,9 +8,21 @@ var ejs = require('ejs');
 var system = require('./system/index');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
+var Redis = require('ioredis');
 var app = express();
 
 
+// let env = vector.config('env');
+// let redisEnv = env.redis;
+let redisCfg = vector.config('db').redis;
+// if(redisCfg && redisCfg.host && redisCfg.family){
+//   let keys = Object.keys(redisEnv.db);
+//   for(let key of keys){
+//     redisCfg.db = redisEnv.db[key];
+//     if(redisCfg.db == 1) continue;
+//     vector.redis[key] = new Redis(redisCfg);
+//   }
+// }
 // view engine setup
 app.engine('.html', ejs.__express)
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var redisCfg = vector.config('db').redis;
+
 //session 的redis 存储对象 
 var sessionRedisStore = new RedisStore({
     host: redisCfg.host,

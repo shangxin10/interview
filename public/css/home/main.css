@@ -72,7 +72,14 @@ div.warning {
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
 }
-
+footer{
+    position: fixed;
+    display: inline-block;
+    z-index: 1000;
+    width: 100%;
+    bottom: 0;
+    height: 50px;
+}
 footer > div {
   background-color: black;
   bottom: 0;
@@ -129,8 +136,12 @@ label {
   transform: scale(-1, 1);
   transition: opacity 1s;
   width: 100%;
+  z-index:1;
 }
-
+#localVideo.active {
+  position: relative;
+  z-index: 200;
+}
 #miniVideo {
   border: 1px solid gray;
   bottom: 40px;
@@ -145,7 +156,7 @@ label {
 
 #miniVideo.active {
   opacity: 1;
-  z-index: 2;
+  z-index: 1000;
 }
 
 #remoteVideo {
@@ -163,11 +174,12 @@ label {
   transform: rotateY(180deg);
   transition: opacity 1s;
   width: 100%;
+  z-index:1;
 }
 
 #remoteVideo.active {
   opacity: 1;
-  z-index: 1;
+  z-index: 200;
 }
 
 #confirm-join-div {
@@ -226,7 +238,7 @@ p {
 /*////// icons CSS start ////////////////////////*/
 
 #icons {
-  bottom: 77px;
+  bottom: 110px;
   left: 6vw;
   position: absolute;
 }
@@ -268,6 +280,8 @@ svg {
   transform: translateX(calc(-6vw - 96px));
   transition: all .1s;
   transition-timing-function: ease-in-out;
+  z-index: 400;
+  position: absolute;
 }
 
 svg:hover {

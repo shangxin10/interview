@@ -2,7 +2,7 @@ var socketio = {};
 var socket_io = require('socket.io');  
 
 
-var data = new Map();
+// var data = new Map();
 
 
 //获取io  
@@ -20,23 +20,48 @@ socketio.getSocketio = function(server){
 		  }
 		  socket.emit('log', array);
 		}
-		socket.on('disconnect',function(){
-			let socketMap = data.get(socket.rid);
+		socket.on('disconnect',async function(){
+			let socketMap = vector.sockets.get(socket.rid);
 			if(!vector.isEmpty(socketMap)){
 				socketMap.delete(socket._id);
 				console.log('delete socket');
 			}
+
 			console.log("user disconnect");
 		})
-		socket.on('message', function (message) {
-			log('Got message:', message);
+
+		socket.on('message', function (message, socketId) {
+			console.log("server message socketid=>",socketId)
+			// log('Got message:', message);
 	    // for a real app, would be room only (not broadcast)
-			socket.broadcast.emit('message', message);
+			
+			
+			if(socketId && vector.sockets.get(socket.rid)){
+				let targetSocket = vector.sockets.get(socket.rid).get(socketId);
+				if(targetSocket){
+					targetSocket.emit('message',message, socket._id);
+					if(message.type==='answer'){
+						// console.log("message ==>",message);
+					}
+					console.log("send success to ",socket._id);
+				}
+			}else{
+				let socketMap = vector.sockets.get(socket.rid);
+				if(!vector.isEmpty(socketMap)){
+					for(let [key,targetSocket] of socketMap){
+						if(key === socket._id){
+							continue;
+						}
+						targetSocket.emit('message', message, socket._id);
+					}
+				}
+				// socket.broadcast.emit('message', message, socket._id);
+			}
 		});
 
-		socket.on('create or join', function (room) {
+		socket.on('create or join', async function (room) {
 
-			let socketMap = data.get(room);
+			let socketMap = vector.sockets.get(room);
 			if(vector.isEmpty(socketMap)){
 				socketMap = new Map();
 			}
@@ -46,30 +71,29 @@ socketio.getSocketio = function(server){
 				socket.rid = room;
 				socketMap.set(socket._id, socket);
 			}
-			data.set(room, socketMap);
-
-			console.log("socketMap.size", socketMap.size)
-			console.log("data.size", data.size)
-			// var roomObj = io.sockets.adapter.rooms[room];
-			// console.log("numClients",roomObj);
-			var numClients = socketMap.size;
-			// if(roomObj != null){
-			// 	numClients = roomObj.length;
-			// }
-			log('Room ' + room + ' has ' + numClients + ' client(s)');
-			log('Request to create or join room ' + room);
-			if (numClients === 1){
-				socket.join(room);
-				socket.emit('created', room);
-				// var test = io.sockets.adapter.rooms;
-				// console.log("numClients",test);
+			console.log("=========================")
+			vector.sockets.set(room, socketMap);
+			var personCount = socketMap.size;
+			if (personCount == 1){
+				console.log("created=====>")
+				// socket.join(room);
+				socket.emit('created',room);
 			} else {
-				io.sockets.in(room).emit('join', room);
-				socket.join(room);
-				socket.emit('joined', room);
+				// socket.join(room);
+				let socketArr = [];
+				if(!vector.isEmpty(socketMap)){
+					for(let [key,targetSocket] of socketMap){
+						if(key === socket._id){
+							continue;
+						}
+						socket.emit('joined', key);
+						targetSocket.emit('join', socket._id);
+					}
+				}
+
 			} 
 			socket.emit('emit(): client ' + socket.id + ' joined room ' + room);
-			socket.broadcast.emit('broadcast(): client ' + socket.id + ' joined room ' + room);
+			// socket.broadcast.emit('broadcast(): client ' + socket.id + ' joined room ' + room);
 		});
     })  
 };  

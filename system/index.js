@@ -75,7 +75,8 @@ global.vector.readdir = path =>{
 global.vector.config = key =>{
     return bucket.config[key] || null;
 }
-
+global.vector.redis = {};
+global.vector.sockets = new Map();
 let bucket = {
     config: {}
 }

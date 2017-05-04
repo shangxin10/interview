@@ -1,4 +1,3 @@
-
 'use strict';
 
 var isChannelReady;
@@ -38,6 +37,7 @@ var socket = io.connect();
 
 socket.on('created', function (room){
   console.log('Created room ' + room);
+  console.log('Created socket ' + socket._id);
   isInitiator = true;
 });
 
@@ -48,11 +48,13 @@ socket.on('full', function (room){
 socket.on('join', function (room){
   console.log('Another peer made a request to join room ' + room);
   console.log('This peer is the initiator of room ' + room + '!');
+  console.log('join socket ' + socket._id);
   isChannelReady = true;
 });
 
 socket.on('joined', function (room){
   console.log('This peer has joined room ' + room);
+  console.log('joined socket ' + socket._id);
   isChannelReady = true;
 });
 
@@ -64,9 +66,9 @@ socket.on('log', function (array){
 
 function sendMessage(message){
 	console.log('Client sending message: ', message);
-  if (typeof message === 'object') {
-    message = JSON.stringify(message);
-  }
+  // if (typeof message === 'object') {
+  //   message = JSON.stringify(message);
+  // }
   socket.emit('message', message);
 }
 
@@ -90,104 +92,148 @@ socket.on('message', function (message){
     pc.addIceCandidate(candidate);
   } else if (message === 'bye' && isStarted) {
     handleRemoteHangup();
+    showLocalVideo();
   }
 });
 
 ////////////////////////////////////////////////////
-
-var localVideo = document.getElementById("localVideo");
-var remoteVideo = document.getElementById('remoteVideo');
-var miniVideo = document.getElementById('miniVideo');
-var createButton = document.getElementById('create-button');
-var joinButton = document.getElementById('join-button');
-if(createButton){
-  createButton.onclick = function(event){
-    // var room = document.getElementById('roomPwd').value; 
-    var roomNum = $("input[name=roomNum]").val();
-    var roomPwd = $("input[name=roomPwd]").val();
-    var roomCreateor = $(this).attr('data-id');
-    var room = {
+// var localVideo = document.getElementById('localVideo');
+// var remoteVideo = document.getElementById('remoteVideo');
+// var miniVideo = document.getElementById('miniVideo');
+var localVideo = $('#localVideo');
+var remoteVideo = $('#remoteVideo');
+var createButton = $('#create-button');
+var joinButton = $("#join-button");
+var miniVideo = $('#miniVideo');
+var enterButton = $(".enter");
+createButton.click(function(event){
+  var roomNum = $("input[name=roomNum]").val();
+  var roomPwd = $("input[name=roomPwd]").val();
+  var roomCreateor = $(this).attr('data-id');
+  var roomType = $("input[name=roomType]").val();
+  var roomName = $("input[name=roomName]").val();
+  var room = {
       roomNum: roomNum,
       roomPwd: roomPwd,
-      roomCreateor: roomCreateor
-    }
-    if(!room || !roomPwd || !roomCreateor){
-      alert('请填写完整信息');
-      return;
-    }
-    $.ajax({
+      roomCreateor: roomCreateor,
+      roomType: roomType,
+      roomName: roomName
+  }
+  $.ajax({
       url: '/home/user/room/create',
       type: 'post',
       data: room,
       success: function(res){
-        if(res.errcode == 0){
-            console.log('Create or join room', roomNum);
-            socket.emit('create or join', roomNum);
-            //获取摄像头
-            getUserMedia(mediaConstraints, handleUserMedia, handleUserMediaError);
-            //显示localVideo
-            showLocalVideo();
-            //隐藏
-            hiddenRoomSelection();
-        }else{
-          alert(res.errmsg);
+          if(res.errcode == 0){
+              console.log('Create or join room', roomNum);
+              socket.emit('create or join', roomNum);
+              //获取摄像头
+              getUserMedia(mediaConstraints, handleUserMedia, handleUserMediaError);
+              //显示localVideo
+              showLocalVideo();
+              //显示底部
+              showFooter(roomNum, roomName, roomType);
+              //显示图标
+              showIcons();
+              //隐藏
+              hiddenRoomSelection();
+              //隐藏头部
+              hiddenHeader();
+          }else{
+            alert(res.errmsg);
+          }
         }
-      }
     })
-  }
-}
-if(joinButton){
-    joinButton.onclick = function(event){
-    // var room = document.getElementById('roomPwd').value; 
-    var roomNum = $("input[name=roomNum]").val();
-    var roomPwd = $("input[name=roomPwd]").val();
-    var room = {
+})
+joinButton.click(function(event){
+  var roomNum = $("input[name=roomNum]").val();
+  var roomPwd = $("input[name=roomPwd]").val();
+  var roomCreateor = $(this).attr('data-id');
+  var room = {
       roomNum: roomNum,
-      roomPwd: roomPwd
-    }
-    if(!room || !roomPwd ){
-      alert('请填写完整信息');
-      return;
-    }
-    $.ajax({
+      roomPwd: roomPwd,
+      roomCreateor: roomCreateor
+  }
+   $.ajax({
       url: '/home/user/room/join',
       type: 'post',
       data: room,
       success: function(res){
-        if(res.errcode == 0){
-            console.log('Create or join room', roomNum);
-            socket.emit('create or join', roomNum);
-            //获取摄像头
-            getUserMedia(mediaConstraints, handleUserMedia, handleUserMediaError);
-            //显示localVideo
-            showLocalVideo();
-            //隐藏
-            hiddenRoomSelection();
-        }else{
-          alert(res.errmsg);
-        }
-      }
+          if(res.errcode == 0){
+              console.log('Create or join room', roomNum);
+              socket.emit('create or join', roomNum);
+              //获取摄像头
+              getUserMedia(mediaConstraints, handleUserMedia, handleUserMediaError);
+              //显示localVideo
+              showLocalVideo();
+              //显示底部
+              showFooter(roomNum, res.data.name, res.data.type);
+              //显示图标
+              showIcons();
+              //隐藏
+              hiddenRoomSelection();
+              //隐藏头部
+              hiddenHeader();
+          }else{
+            alert(res.errmsg);
+          }
+       }
     })
-  }
-}
+})
+
+enterButton.click(function(){
+    var roomNum = $(this).parent().siblings('.roomNum').text();
+    var roomName = $(this).parent().siblings('.roomName').text();
+    var roomType = $(this).parent().siblings('.roomType').text();
+    console.log('Create or join room', roomNum);
+    socket.emit('create or join', roomNum);
+    //获取摄像头
+    getUserMedia(mediaConstraints, handleUserMedia, handleUserMediaError);
+    //显示localVideo
+    showLocalVideo();
+    //显示图标
+    showIcons();
+    //显示底部
+    showFooter(roomNum,roomName,roomType);
+    //隐藏头部
+    hiddenHeader();
+
+})
 
 function showLocalVideo(){
-  localVideo.setAttribute('class','active');
+  localVideo.attr('class','active');
+  miniVideo.attr("class","");
+  remoteVideo.attr("src","");
+  miniVideo.attr('src','');
+}
+function showIcons(){
+  $("#icons").attr('class','active');
+}
+
+function showFooter(num, name, type){
+  $("#room-num").text(num)
+  $("#room-name").text(name);
+  $("#sharing-div").attr('class','active');
 }
 
 function hiddenRoomSelection(){
-  var roomSelection = document.getElementById('room-selection');
-  roomSelection.setAttribute("class",'hidden');
+  $("#room-selection").attr("class",'hidden');
 }
 
+function hiddenIcons(){
+  $("#icons").attr('class','hidden');
+}
+function hiddenHeader(){
+  $(".header").attr("class","hidden");
+}
 function showRemotoVideo(){
-  miniVideo.setAttribute("class","active");
-  remoteVideo.setAttribute("class","active");
-  localVideo.setAttribute("class","");
+  miniVideo.attr("class","active");
+  remoteVideo.attr("class","active");
+  localVideo.attr("class","");
 }
 function handleUserMedia(stream) {
   console.log('Adding local stream.');
-  localVideo.src = window.URL.createObjectURL(stream);
+  localVideo.attr('src',window.URL.createObjectURL(stream));
   localStream = stream;
   sendMessage('got user media');
   if (isInitiator) {
@@ -209,6 +255,7 @@ function handleUserMediaError(error){
 // }
 
 function maybeStart() {
+  // console.log("====>",maybeStart);
   if (!isStarted && typeof localStream != 'undefined' && isChannelReady) {
     createPeerConnection();
     pc.addStream(localStream);
@@ -221,7 +268,8 @@ function maybeStart() {
 }
 
 window.onbeforeunload = function(e){
-	sendMessage('bye');
+	 sendMessage('bye');
+   console.log();
 }
 
 /////////////////////////////////////////////////////////
@@ -255,7 +303,7 @@ function handleIceCandidate(event) {
 
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
-  remoteVideo.src = window.URL.createObjectURL(event.stream);
+  remoteVideo.attr('src',window.URL.createObjectURL(event.stream));
   remoteStream = event.stream;
 
 }
@@ -316,9 +364,9 @@ function requestTurn(turn_url) {
 
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
-  remoteVideo.src = window.URL.createObjectURL(event.stream);
+  remoteVideo.attr('src', window.URL.createObjectURL(event.stream));
   remoteStream = event.stream;
-  miniVideo.src = window.URL.createObjectURL(localStream)
+  miniVideo.attr('src', window.URL.createObjectURL(localStream));
   //设置另一端video
   showRemotoVideo();
 }
@@ -334,8 +382,8 @@ function hangup() {
 }
 
 function handleRemoteHangup() {
-//  console.log('Session terminated.');
-  // stop();
+  console.log('Session terminated.');
+  stop();
   // isInitiator = false;
 }
 
@@ -345,6 +393,8 @@ function stop() {
   // isVideoMuted = false;
   pc.close();
   pc = null;
+  isInitiator = true;
+  console.log("isInititator",isInitiator)
 }
 
 ///////////////////////////////////////////

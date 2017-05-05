@@ -121,4 +121,35 @@ router.get('/del',async(req, res, next)=>{
 		})
 	}
 })
+
+router.post('/upload',async(req, res, next)=>{
+	var mime = require('mime');
+    var formidable = require('formidable');
+    var util = require('util');
+
+    var form = new formidable.IncomingForm();
+
+    var dir = !!process.platform.match(/^win/) ? '\\uploads\\' : '/uploads/';
+
+    form.uploadDir = __dirname + dir;
+    form.keepExtensions = true;
+    form.maxFieldsSize = 10 * 1024 * 1024;
+    form.maxFields = 1000;
+    form.multiples = false;
+
+    form.parse(req, function(err, fields, files) {
+        var file = util.inspect(files);
+
+
+        var fileName = file.split('path:')[1].split('\',')[0].split(dir)[1].toString().replace(/\\/g, '').replace(/\//g, '');
+        var fileURL = 'http://' + app.address + ':' + port + '/uploads/' + fileName;
+
+        console.log('fileURL: ', fileURL);
+        return res.json({
+			errcode: 0,
+			errmsg: '上传成功',
+			data: fileURL
+		})
+    });
+})
 module.exports = router;

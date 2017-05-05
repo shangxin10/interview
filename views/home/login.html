@@ -14,18 +14,17 @@
 	<%include ./header.html%>
     <div class="container">
         <form class="form-signin" method="POST" action="/home/login">
-            <h3 class="form-signin-heading">Sign In</h3>
+            <h3 class="form-signin-heading">登录</h3>
             <hr>
             <div class="form-group">
-                <input autofocus="autofocus" id="id_login" name="username" placeholder="Username or e-mail" type="text" required="" class="form-control">
+                <input autofocus="autofocus" id="id_login" name="username" placeholder="手机号码" type="text" required="" class="form-control">
             </div>
             <div class="form-group">
-                <input id="id_password" name="password" placeholder="Password" type="password" required="" class="form-control">
+                <input id="id_password" name="password" placeholder="密码" type="password" required="" class="form-control">
             </div>
-            <label class="form-group"><input id="id_remember" name="remember" type="checkbox">Remember Me</label>
             <div class="form-group">
-                 <button class="btn btn-primary" type="submit">Sign In</button>
-                 <a class="pull-right" href="/accounts/password/reset/">Forgot Password?</a>
+                 <button class="btn btn-primary" type="submit">登录</button>
+                 <a class="pull-right" href="/home/forgetPwd">忘记密码?</a>
             </div>
             <hr>    
         </form>

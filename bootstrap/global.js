@@ -5,9 +5,9 @@ import fs from 'fs';
 import mongoose from 'mongoose';
 import Bluebird from 'bluebird';
 import moment from "moment";
-
+import nodemailer  from "nodemailer";
 let reconnected = 0; //重连mongodb 次数
-
+let chars = 'abcdefgijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 global.connectToMongo = async (options) => {
     options = options || vector.config('db').mongodb;
     //替换默认Promise,避免报告过期的警告  Bluebird 封装了系统的Promise,速度比Promise快6倍
@@ -63,3 +63,25 @@ global.formatDate = (datetime, pattern) => {
     }
     return m.format();
 };
+
+/**
+ * 获取随机字符串
+ */
+global.getRandomStr = (count, isNumber) => {
+    count = count || 4; //默认返回为4个字符
+    let str = "";
+    let chs = chars;
+    if(isNumber) {
+        chs = chars.filter(ch => {
+            return ch >= '0' && ch <= '9';
+        });
+    }
+    let len = chs.length;
+    for(let i = 0;i < count;i++) {
+        str += chs[parseInt(Math.random() * len)];
+    }
+    return str;
+};
+
+//邮件发送
+global.transporter = nodemailer.createTransport(vector.config('env').email);

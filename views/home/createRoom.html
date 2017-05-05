@@ -8,12 +8,16 @@
 
 <title>WebRTC client</title>
 <link rel="stylesheet" type="text/css" href="/css/home/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/home/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" type="text/css" href="/css/home/index.css">
 <link rel="stylesheet" type="text/css" href="/css/home/default.css">
 <link rel="stylesheet" href="/css/home/main.css">
 <script type="text/javascript" src="/js/home/jquery-3.2.1.min.js"></script>
 <script rel="text/javascript" src="/js/home/bootstrap.min.js"></script>
-<script src="/node_modules/recordrtc/RecordRTC.js"> </script>
+<script rel="text/javascript" src="/js/home/bootstrap-datetimepicker.min.js"></script>
+<script rel="text/javascript" src="/js/home/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<!--<script src="/node_modules/recordrtc/RecordRTC.js"> </script>-->
 </head>
 
 <body>
@@ -69,10 +73,32 @@
                   <%locals.roomType && locals.roomType.forEach(function(type,idx){%>
                         <option value="<%=idx%>"><%=type%></option>
                   <%
-                  })%>
-                  
+                  })%>   
               </select>
           </div>
+          <div class="form-group">
+              <input  name="interviewer"  type="text" placeholder="面试者姓名" required="" class="form-control">
+          </div>
+          <div class="form-group">
+              <input  name="phone"  type="text" placeholder="面试者手机号码" required="" class="form-control">
+          </div>
+          <div class="form-group">
+              <input  name="email"  type="text" placeholder="面试者邮箱" required="" class="form-control">
+          </div>
+          <div class="form-group">
+              <input   name="startDate" readonly  type="text" placeholder="面试开始时间" required="" class="form-control date">
+          </div>
+          <div class="form-group">
+              <input name="endDate" readonly  type="text" placeholder="面试结束时间" required="" class="form-control date">
+          </div>
+          <script type="text/javascript">
+              $(".date").datetimepicker({
+                  format: "yyyy-mm-dd hh:ii",
+                  autoclose: true,
+                  todayBtn: true,
+                  pickerPosition: "bottom-left"
+              });
+          </script>        
           <div class="form-group">
                 <button class="btn btn-primary" type="button" id="create-button" data-id="<%=locals.user._id%>">创建</button>
           </div>

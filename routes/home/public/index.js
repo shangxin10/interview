@@ -169,8 +169,6 @@ router.post('/forgetPwd', async(req, res, next)=>{
             errmsg: '用户不存在'
         })
     }
-    console.log('==========>');
-
 
     let emailCode = user.code.split('-')[0];
     let createDate = user.code.split('-')[1];

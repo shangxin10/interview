@@ -10,12 +10,14 @@ router.get("/create", async (req, res, next) => {
 router.post('/create',async(req, res, next) =>{
 	let {
 		roomNum, roomPwd, roomCreateor,
-		roomName, roomType
+		roomName, roomType, interviewer,
+		phone, email, startDate, endDate
 	} = req.body;
 
 	let Room = await model("Room").findOne({
 		num: roomNum
 	})
+
 
 	if(!vector.isEmpty(Room)){
 		return res.json({
@@ -23,12 +25,20 @@ router.post('/create',async(req, res, next) =>{
 			errmsg: '创建失败，房间已存在'
 		})
 	}
+	let startTime = vector.strtotime(startDate, 'YYYY-MM-DD HH:mm');
+	let endTime = vector.strtotime(endDate, 'YYYY-MM-DD HH:mm');
+	
 	let created = await model("Room").create({
 		num: roomNum,
 		password: roomPwd,
 		createor: roomCreateor,
 		name: roomName,
-		type: roomType
+		type: roomType,
+		interviewer: interviewer,
+		phone: phone,
+		email: email,
+		startDate: startTime,
+		endDate: endTime
 	})
 
 	await res.json({
@@ -44,11 +54,12 @@ router.get('/join', async(req, res, next)=>{
 
 router.post('/join',async(req, res, next) =>{
 	let {
-		roomNum, roomPwd
+		roomNum, roomPwd, 
+		interviewer, uid
 	} = req.body;
 
 	let Room = await model("Room").findOne({
-		num: roomNum
+		num: roomNum,
 	})
 
 	if(vector.isEmpty(Room)){
@@ -57,7 +68,7 @@ router.post('/join',async(req, res, next) =>{
 			errmsg: '房间不存在'
 		})
 	}
-
+	
 	if(Room.password != roomPwd){
 		return res.json({
 			errcode: 10002,
@@ -65,7 +76,26 @@ router.post('/join',async(req, res, next) =>{
 		})
 	}
 
+	if(Room.interviewer != interviewer){
+		return res.join({
+			errcode: 10003,
+			errmsg: "请输入正确的姓名"
+		})
+	}
+	if(Room.startDate > Date.now()){
+		return res.json({
+			errcode: 10003,
+			errmsg: "面试还没开始"
+		})
+	}
 	
+	if(Room.endDate < Date.now()){
+		return res.json({
+			errcode: 10004,
+			errmsg: "面试已结束"
+		})
+	}
+
 	let personCount = vector.sockets.get(roomNum) ? vector.sockets.get(roomNum).size : 0;
 	let limit = Room.type == 0 ? 2 : 3;
 
@@ -74,6 +104,15 @@ router.post('/join',async(req, res, next) =>{
 		return res.json({
 			errcode: 10003,
 			errmsg: "房间人数已满"
+		})
+	}
+
+	let User = await model("User").findById(uid);
+
+	if(User.type == 1 && User.company != Room.company && Room.type == 1){
+		return res.json({
+			errcode: 10004,
+			errmsg: '您没有权限进入'
 		})
 	}
 	

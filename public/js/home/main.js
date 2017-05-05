@@ -136,15 +136,33 @@ createButton.click(function(event){
     var roomNum = $("input[name=roomNum]").val();
     var roomPwd = $("input[name=roomPwd]").val();
     var roomCreateor = $(this).attr('data-id');
-    var roomType = $("input[name=roomType]").val();
+    var roomType = $("select[name=roomType]").val();
     var roomName = $("input[name=roomName]").val();
+    var interviewer = $("input[name=interviewer]").val();
+    var phone = $("input[name=phone]").val();
+    var email = $("input[name=email]").val();
+    var startDate = $("input[name=startDate]").val();
+    var endDate = $("input[name=endDate]").val();
     var room = {
         roomNum: roomNum,
         roomPwd: roomPwd,
-        roomCreateor: roomCreateor,
         roomType: roomType,
-        roomName: roomName
+        roomName: roomName,
+        interviewer: interviewer,
+        phone: phone,
+        email: email,
+        startDate: startDate,
+        endDate: endDate,
+        roomCreateor: roomCreateor
     }
+
+    console.log("room",room)
+    if(!roomNum || !roomPwd || !roomType 
+        || !roomName || !interviewer || !phone
+        || !email || !startDate || !endDate || !roomCreateor){
+            alert("请填写完整信息");
+            return;
+        }
     $.ajax({
         url: '/home/user/room/create',
         type: 'post',

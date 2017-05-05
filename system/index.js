@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import router from './router';
+import moment from "moment";
 
 global.vector = {
     APP_PATH: path.normalize(path.join(__dirname,'..'))
@@ -53,6 +54,15 @@ global.vector.isObjectId = str => {
     return mongoose.Types.ObjectId.isValid(str);
 };
 
+/**
+ * 字符串转时间
+ */
+global.vector.strtotime = (str, pattern) => {
+    if(vector.isString(pattern) && pattern.length) {
+        return moment(str, pattern).valueOf();
+    }
+    return moment(str).valueOf();
+}
 /**
  * 读取目录,过滤掉Markdown文件
  */

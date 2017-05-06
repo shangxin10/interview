@@ -3,6 +3,7 @@
 import mongoose from "mongoose";
 let Schema = mongoose.Schema;
 
+
 /**
  * 用户账号
  */
@@ -12,7 +13,7 @@ let UserSchema = new Schema({
     password: {type: String, required: true}, //密码
     nickname:{type: String, required: true},  //昵称
     email: {type: String, required: true},  //邮箱
-    sex: {type: Number, required: true, default: 0}, // 性别：0为未知，1为男，2位女
+    sex: {type: Number, required: true,  default: 0}, // 性别：0为未知，1为男，2位女
     company: {type: String}, //公司
     code: {type: String}, //邮箱找回密码
     role: {type: Number, required: true, default: 0} //0为普通用户,1为面试者
@@ -28,7 +29,7 @@ let RoomSchema = new Schema({
     phone:{type: String, required: true}, //面试者手机
     email: {type: String, required: true}, //面试者邮箱
     startDate: {type: Number, required: true}, //面试开始时间
-    endDate: {type: String, required: true}, //面试结束时间
+    endDate: {type: Number, required: true}, //面试结束时间
     createor: {type: String, required: true} //房间创建者
 })
 

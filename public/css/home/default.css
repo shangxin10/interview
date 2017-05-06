@@ -74,7 +74,11 @@ a {
 }
 
 .form-signin {
-    max-width: 300px;
+    position: absolute;
+    left: 35%;
+    top: 10%;
+    width: 26%;
+    max-width: 400px;
     padding: 19px 29px 29px;
     margin: 100px auto 20px;
     background-color: #fff;

@@ -13,8 +13,12 @@ export default {
         secureConnection: true,
         auth: {
             user: '18813973836@163.com',
-            pass: 'vector101520' 
+            pass: '' 
         }
-    } 
+    },
+    admin:{
+        username: 'vector',
+        password: '123456'
+    }
 }
 
